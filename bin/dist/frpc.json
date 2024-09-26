@@ -1,0 +1,95 @@
+{
+  "serverAddr": "hu.nemoinfo.com",
+  "serverPort": 44443,
+  "user": "george_ca",
+  "start": [
+    "xtcp",
+    "adminer"
+  ],
+  "webServer": {
+    "port": 8888
+  },
+  "visitors": [
+    {
+      "name": "stcp",
+      "type": "stcp",
+      "serverName": "stcp",
+      "serverUser": "nemoinfo.9",
+      "bindPort": 2022,
+      "transport": {
+        "useEncryption": false,
+        "useCompression": false
+      }
+    },
+    {
+      "name": "guangyang",
+      "type": "stcp",
+      "bindPort": 2222,
+      "serverName": "sssh",
+      "serverUser": "guangyang",
+      "secretKey": "nemoinfo.com"
+    },
+    {
+      "name": "xtcp",
+      "type": "xtcp",
+      "bindPort": 12022,
+      "serverName": "xtcp",
+      "serverUser": "nemoinfo.9",
+      "keepTunnelOpen": true,
+      "secretKey": "nemo@301"
+    },
+    {
+      "name": "adminer",
+      "type": "xtcp",
+      "bindPort": 8080,
+      "serverName": "adminer",
+      "serverUser": "nemoinfo.9",
+      "keepTunnelOpen": true,
+      "secretKey": "nemo@301"
+    },
+    {
+      "name": "ssh.8",
+      "type": "xtcp",
+      "bindPort": 3022,
+      "serverName": "ssh.8",
+      "serverUser": "nemoinfo.9",
+      "keepTunnelOpen": true,
+      "secretKey": "nemo@301"
+    },
+    {
+      "name": "mysql",
+      "type": "stcp",
+      "bindAddr": "127.0.0.1",
+      "bindPort": 3306,
+      "serverName": "mysql",
+      "serverUser": "nemoinfo.9",
+      "secretKey": "nemo@301"
+    }
+  ],
+  "proxies": [
+    {
+      "name": "sssh",
+      "type": "stcp",
+      "localIP": "127.0.0.1",
+      "localPort": 33000,
+      "transport": {
+        "useEncryption": false,
+        "useCompression": false,
+        "bandwidthLimitMode": "client"
+      },
+      "secretKey": "moosephotoprint"
+    },
+    {
+      "name": "myFastFTP",
+      "type": "xtcp",
+      "localIP": "127.0.0.1",
+      "localPort": 22,
+      "transport": {
+        "useEncryption": false,
+        "useCompression": false,
+        "bandwidthLimitMode": "client"
+      },
+      "secretKey": "guessme!?"
+    }
+  ]
+}
