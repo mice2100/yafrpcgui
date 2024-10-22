@@ -255,6 +255,7 @@ document.on("click", "#startStopButton", async(event) => {
         fnNewLine("FRPC Stopped", "info");
     } else {
         document.$("#startStopButton").textContent = "Stop";
+        saveConfig();
         let path = URL.toPath(env.home("wfrpc.exe"));
         const args = [path, "-c", CONFIG_FILE];
         processFrpc = sys.spawn(args, { stdout: "pipe", stderr: "pipe" });
