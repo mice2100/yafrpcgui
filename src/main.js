@@ -59,6 +59,7 @@ function loadConfig() {
         config.visitors = [];
         updateUI();
     }
+    config.auth = config.auth || {}
     
     updateUI();
 }
@@ -68,6 +69,7 @@ function saveConfig() {
     config.serverPort = parseInt(document.$('#serverPort').value);
     config.user = document.$('#user').value;
     config.webServer.port = parseInt(document.$('#webServerPort').value);
+    config.auth.token = document.$('#token').value||undefined;
 
     let file = sys.fs.sync.open(CONFIG_FILE, 'w');
     file.write(sciter.encode(JSON.stringify(config, null, 2)));
@@ -77,6 +79,7 @@ function saveConfig() {
 function updateUI() {
     document.$('#serverAddr').value = config.serverAddr;
     document.$('#serverPort').value = config.serverPort;
+    document.$('#token').value = config.auth?.token;
     document.$('#user').value = config.user;
     document.$('#webServerPort').value = config.webServer.port;
 
@@ -251,10 +254,12 @@ document.on("click", "#startStopButton", async(event) => {
     if (processFrpc) {
         processFrpc.kill();
         document.$("#startStopButton").textContent = "Start";
+        document.$('#webServerPort').state.disabled = false;
         processFrpc = null;
         fnNewLine("FRPC Stopped", "info");
     } else {
         document.$("#startStopButton").textContent = "Stop";
+        document.$('#webServerPort').state.disabled = true;
         saveConfig();
         let path = URL.toPath(env.home("wfrpc.exe"));
         const args = [path, "-c", CONFIG_FILE];

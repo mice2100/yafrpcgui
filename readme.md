@@ -22,3 +22,8 @@ If you want to build an exe, run quark from sciter SDK, specify information, poi
 ## Note:
 1. The release package contains wfprc.exe, which is renamed from frpc.exe, in order to avoid windows defender's blocking. You can download the latest one from https://github.com/fatedier/frp/releases and rename to replace it.
 
+## Change Log
+1. 2024-10-23: 
+    Add token auth support.
+    Disable webserver port after running.
+    Change layout so it won't become so messy when there are many proxies or visitors.

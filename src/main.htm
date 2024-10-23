@@ -5,7 +5,8 @@
     <style>
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: Inter, sans-serif;
+            font-size: 15px;
             padding: 20px;
         }
 
@@ -16,7 +17,7 @@
         input {
             margin-bottom: 10px;
             padding: 5px;
-            font-size: 14px;
+            /* font-size: 14px; */
         }
 
         button {
@@ -26,7 +27,7 @@
         .control-button {
             margin: 0px;
             margin-left: 10px;
-            font-size: 12px;
+            /* font-size: 12px; */
             padding: 2px 10px;
             cursor: pointer;
             width: 60px;
@@ -46,7 +47,7 @@
             border: 1px solid #ccc;
             padding: 10px;
             margin: 5px;
-            height: 140px;
+            height: 160px;
             overflow-y: auto;
         }
 
@@ -155,7 +156,8 @@
 
         .control-button {
             margin-left: 10px;
-            font-size: 12px;
+            width: 80px;
+            font-size: 15px;
             padding: 5px 10px;
             height: 20px;
             cursor: pointer;
@@ -184,13 +186,19 @@
             <div class="setting-row">
                 <label for="serverAddr">Server Address:</label>
                 <div class="input-container">
-                    <input type="text" id="serverAddr">
+                    <input type="text" id="serverAddr" />
                 </div>
             </div>
             <div class="setting-row">
                 <label for="serverPort">Server Port:</label>
                 <div class="input-container">
                     <input type="number" id="serverPort" class="ten-digit-input">
+                </div>
+            </div>
+            <div class="setting-row">
+                <label for="serverPort">Token:</label>
+                <div class="input-container">
+                    <input type="password" id="token"/>
                 </div>
             </div>
             <div class="setting-row">
