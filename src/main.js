@@ -60,6 +60,7 @@ function loadConfig() {
         updateUI();
     }
     config.auth = config.auth || {}
+    config.transport = config.transport || {}
     
     updateUI();
 }
@@ -70,7 +71,7 @@ function saveConfig() {
     config.user = document.$('#user').value;
     config.webServer.port = parseInt(document.$('#webServerPort').value);
     config.auth.token = document.$('#token').value||undefined;
-
+    config.transport.protocol = document.$('#transProtocol').value||undefined;
     let file = sys.fs.sync.open(CONFIG_FILE, 'w');
     file.write(sciter.encode(JSON.stringify(config, null, 2)));
     file.close();
@@ -82,7 +83,7 @@ function updateUI() {
     document.$('#token').value = config.auth?.token;
     document.$('#user').value = config.user;
     document.$('#webServerPort').value = config.webServer.port;
-
+    document.$('#transProtocol').value = config.transport.protocol;
     updateVisitorList();
     updateProxyList();
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html window-width="1000" window-height="800" window-resizable="true" window-minimizable="true" window-maximizable="true">
+<html window-width="1000" window-height="900" window-resizable="true" window-minimizable="true" window-maximizable="true">
 <head>
     <title>Yet Another FRPC GUI</title>
     <style>
@@ -196,7 +196,19 @@
                 </div>
             </div>
             <div class="setting-row">
-                <label for="serverPort">Token:</label>
+                <label for="transProtocol">Transport Protocol:</label>
+                <div class="input-container">
+                    <select id="transProtocol">
+                        <option value="tcp">TCP</option>
+                        <option value="kcp">KCP</option>
+                        <option value="quic">QUIC</option>
+                        <option value="websocket">WebSocket</option>
+                        <option value="wss">WSS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label for="token">Token:</label>
                 <div class="input-container">
                     <input type="password" id="token"/>
                 </div>
