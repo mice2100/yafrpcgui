@@ -78,14 +78,15 @@ function saveConfig() {
 }
 
 function updateUI() {
-    document.$('#serverAddr').value = config.serverAddr;
-    document.$('#serverPort').value = config.serverPort;
-    document.$('#token').value = config.auth?.token;
-    document.$('#user').value = config.user;
-    document.$('#webServerPort').value = config.webServer.port;
-    document.$('#transProtocol').value = config.transport.protocol;
+    document.$('#serverAddr').value = config.serverAddr || '';
+    document.$('#serverPort').value = config.serverPort || '';
+    document.$('#token').value = config.auth?.token || '';
+    document.$('#user').value = config.user || '';
+    document.$('#webServerPort').value = config.webServer?.port || '';
+    document.$('#transProtocol').value = config.transport?.protocol || 'tcp';
     updateVisitorList();
     updateProxyList();
+    updateCounts();
 }
 
 // @jsx
@@ -93,21 +94,43 @@ function updateUI() {
 function updateVisitorList() {
     const visitorList = document.$('#visitorList');
     visitorList.innerHTML = '';
+
+    if (config.visitors.length === 0) {
+        visitorList.append(
+            <div class="empty-state">
+                <div class="icon">○</div>
+                <div>No visitors configured</div>
+            </div>
+        );
+        return;
+    }
+
     config.visitors.forEach((visitor, index) => {
         const isEnabled = config.start.includes(visitor.name);
         visitorList.append(
-            <div class="item">
-                <h3>
-                    <span>{visitor.name}</span>
-                    <button id="editVisitor" class="icon-button edit" title="Edit" data-index={index}><icon|edit /></button>
-                    <button id="deleteVisitor" class="icon-button delete" title="Delete" data-index={index}><icon|delete /></button>
-                </h3>
-                <p>Type: {visitor.type}</p>
-                <p>Bind Port: {visitor.bindPort}</p>
-                <toggle id="toggleVisitor" 
-                        data-index={index} 
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">{visitor.name}</span>
+                    <div class="card-actions">
+                        <button id="editVisitor" class="icon-btn edit" title="Edit" data-index={index}><icon|edit /></button>
+                        <button id="deleteVisitor" class="icon-btn delete" title="Delete" data-index={index}><icon|delete /></button>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <span class="label">Type</span>
+                    <span class="value badge {visitor.type}">{visitor.type}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">Server</span>
+                    <span class="value">{visitor.serverName}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">Bind</span>
+                    <span class="value">{visitor.bindAddr || '0.0.0.0'}:{visitor.bindPort}</span>
+                </div>
+                <toggle id="toggleVisitor"
+                        data-index={index}
                         checked={isEnabled}>
-                    {isEnabled ? 'Enabled' : 'Disabled'}
                 </toggle>
             </div>
         );
@@ -117,22 +140,47 @@ function updateVisitorList() {
 function updateProxyList() {
     const proxyList = document.$('#proxyList');
     proxyList.innerHTML = '';
+
+    if (config.proxies.length === 0) {
+        proxyList.append(
+            <div class="empty-state">
+                <div class="icon">○</div>
+                <div>No proxies configured</div>
+            </div>
+        );
+        return;
+    }
+
     config.proxies.forEach((proxy, index) => {
         const isEnabled = config.start.includes(proxy.name);
         proxyList.append(
-            <div class="item">
-                <h3>
-                    <span>{proxy.name}</span>
-                    <button id="editProxy" class="icon-button edit" title="Edit" data-index={index}><icon|edit /></button>
-                    <button id="deleteProxy" class="icon-button delete" title="Delete" data-index={index}><icon|delete /></button>
-                </h3>
-                <p>Type: {proxy.type}</p>
-                <p>Local: {proxy.localIP}:{proxy.localPort}</p>
-                {proxy.remotePort && <p>Remote Port: {proxy.remotePort}</p>}
-                <toggle id="toggleProxy" 
-                        data-index={index} 
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">{proxy.name}</span>
+                    <div class="card-actions">
+                        <button id="editProxy" class="icon-btn edit" title="Edit" data-index={index}><icon|edit /></button>
+                        <button id="deleteProxy" class="icon-btn delete" title="Delete" data-index={index}><icon|delete /></button>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <span class="label">Type</span>
+                    <span class="value badge {proxy.type}">{proxy.type}</span>
+                </div>
+                <div class="card-row">
+                    <span class="label">Local</span>
+                    <span class="value">{proxy.localIP || '127.0.0.1'}:{proxy.localPort}</span>
+                </div>
+                {proxy.remotePort && <div class="card-row">
+                    <span class="label">Remote</span>
+                    <span class="value">:{proxy.remotePort}</span>
+                </div>}
+                {proxy.customDomains && <div class="card-row">
+                    <span class="label">Domain</span>
+                    <span class="value">{proxy.customDomains[0]}</span>
+                </div>}
+                <toggle id="toggleProxy"
+                        data-index={index}
                         checked={isEnabled}>
-                    {isEnabled ? 'Enabled' : 'Disabled'}
                 </toggle>
             </div>
         );
@@ -160,6 +208,7 @@ function saveProxyData(index, proxyData) {
         config.proxies.push(proxyData);
     }
     updateProxyList();
+    updateCounts();
 }
 
 function saveVisitorData(index, visitorData) {
@@ -169,6 +218,7 @@ function saveVisitorData(index, visitorData) {
         config.visitors.push(visitorData);
     }
     updateVisitorList();
+    updateCounts();
 }
 
 document.on('ready', loadConfig);
@@ -251,6 +301,28 @@ function toggleProxy(index) {
     updateProxyList();
 }
 
+function updateCounts() {
+    const proxyCount = document.$('#proxyCount');
+    const visitorCount = document.$('#visitorCount');
+    if (proxyCount) proxyCount.textContent = config.proxies.length.toString();
+    if (visitorCount) visitorCount.textContent = config.visitors.length.toString();
+}
+
+function updateStatusIndicator(isRunning) {
+    const statusIndicator = document.$('#statusIndicator');
+    if (statusIndicator) {
+        if (isRunning) {
+            statusIndicator.classList.remove('stopped');
+            statusIndicator.classList.add('running');
+            statusIndicator.textContent = '● Running';
+        } else {
+            statusIndicator.classList.remove('running');
+            statusIndicator.classList.add('stopped');
+            statusIndicator.textContent = '● Stopped';
+        }
+    }
+}
+
 document.on("click", "#startStopButton", async(event) => {
     if (processFrpc) {
         processFrpc.kill();
@@ -258,6 +330,7 @@ document.on("click", "#startStopButton", async(event) => {
         document.$('#webServerPort').state.disabled = false;
         processFrpc = null;
         fnNewLine("FRPC Stopped", "info");
+        updateStatusIndicator(false);
     } else {
         document.$("#startStopButton").textContent = "Stop";
         document.$('#webServerPort').state.disabled = true;
@@ -267,7 +340,7 @@ document.on("click", "#startStopButton", async(event) => {
         processFrpc = sys.spawn(args, { stdout: "pipe", stderr: "pipe" });
         let pout = pipeReader(processFrpc.stdout, "stdout", fnNewLine);
         let perr = pipeReader(processFrpc.stderr, "stderr", fnNewLine);
-        
+
         var r = await processFrpc.wait()
         processFrpc.stderr.close()
         processFrpc.stdout.close()
@@ -275,6 +348,7 @@ document.on("click", "#startStopButton", async(event) => {
         await perr
         document.$("#startStopButton").textContent = "Start";
         fnNewLine("FRPC Stopped", "info");
+        updateStatusIndicator(false);
         processFrpc = null;
     }
 });

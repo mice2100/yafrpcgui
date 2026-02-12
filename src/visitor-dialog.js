@@ -1,6 +1,6 @@
 import * as sciter from '@sciter';
 
-let params = Window.this.parameters||{index: -1};
+let params = Window.this.parameters || {index: -1};
 
 document.on('ready', () => {
     if (params.index >= 0) {
@@ -12,28 +12,28 @@ document.on('ready', () => {
 });
 
 function showHideXtcpConfig() {
-    const xtcpConfig = document.querySelectorAll('.xtcp-config')
-    xtcpConfig.forEach(config => {
+    const xtcpSection = document.$('#xtcpSection');
+    if (xtcpSection) {
         if (document.$('#type').value === 'xtcp') {
-            config.classList.remove('hidden');
+            xtcpSection.classList.remove('hidden');
         } else {
-            config.classList.add('hidden');
+            xtcpSection.classList.add('hidden');
         }
-    });
+    }
 }
 
 document.on('change', '#type', showHideXtcpConfig);
 
 function loadVisitorData() {
     let visitor = params.data;
-    document.$('#name').value = visitor.name;
-    document.$('#type').value = visitor.type;
-    document.$('#serverName').value = visitor.serverName;
+    document.$('#name').value = visitor.name || '';
+    document.$('#type').value = visitor.type || 'stcp';
+    document.$('#serverName').value = visitor.serverName || '';
     document.$('#serverUser').value = visitor.serverUser || '';
     document.$('#secretKey').value = visitor.secretKey || '';
     document.$('#bindAddr').value = visitor.bindAddr || '';
-    document.$('#bindPort').value = visitor.bindPort;
-    
+    document.$('#bindPort').value = visitor.bindPort || '';
+
     // Transport config
     document.$('#useEncryption').checked = visitor.transport?.useEncryption || false;
     document.$('#useCompression').checked = visitor.transport?.useCompression || false;
@@ -47,7 +47,7 @@ function loadVisitorData() {
         document.$('#fallbackTo').value = visitor.fallbackTo || '';
         document.$('#fallbackTimeoutMs').value = visitor.fallbackTimeoutMs || '';
     }
-    
+
     // Call showHideXtcpConfig after setting the type
     showHideXtcpConfig();
 }
@@ -81,4 +81,4 @@ document.on('click', '#save', (event) => {
 
 document.on('click', '#cancel', (event) => {
     Window.this.close();
-}); 
+});
