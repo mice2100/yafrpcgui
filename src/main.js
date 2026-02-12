@@ -188,14 +188,14 @@ function updateProxyList() {
 }
 
 function addProxy() {
-    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: { index: -1 } });
+    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: { index: -1 }, alignment: 5 });
     if (result) {
         saveProxyData(-1, result.data);
     }
 }
 
 function addVisitor() {
-    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: { index: -1 } });
+    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: { index: -1 }, alignment: 5 });
     if (result) {
         saveVisitorData(-1, result.data);
     }
@@ -229,7 +229,7 @@ document.on("click", "#addVisitor", addVisitor);
 document.on("click", "#editProxy", function(evt, elt) {
     const index = elt.getAttribute("data-index");
     const params = { index: index, data: config.proxies[index] };
-    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: params });
+    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: params, alignment: 5 });
     if (result) {
         config.proxies[index] = result.data;
         updateProxyList();
@@ -248,7 +248,7 @@ document.on("click", "#deleteProxy", function(evt, elt) {
 document.on("click", "#editVisitor", function(evt, elt) {
     const index = elt.getAttribute("data-index");
     const params = { index: index, data: config.visitors[index] };
-    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: params });
+    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: params, alignment: 5 });
     if (result) {
         config.visitors[index] = result.data;
         updateVisitorList();

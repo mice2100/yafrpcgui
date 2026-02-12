@@ -125,7 +125,7 @@
         </div>
         <div class="form-field fixed">
             <label class="form-label" for="bindPort">Port</label>
-            <input|number id="bindPort" placeholder="2200">
+            <input|text filter="0~9" id="bindPort" placeholder="2200">
         </div>
     </div>
 
@@ -176,11 +176,11 @@
             </div>
             <div class="form-field fixed">
                 <label class="form-label" for="maxRetriesAnHour">Max/Hr</label>
-                <input|number id="maxRetriesAnHour" value="8" placeholder="8">
+                <input|text filter="0~9" id="maxRetriesAnHour" value="8" placeholder="8">
             </div>
             <div class="form-field fixed">
                 <label class="form-label" for="minRetryInterval">Min/s</label>
-                <input|number id="minRetryInterval" value="90" placeholder="90">
+                <input|text filter="0~9" id="minRetryInterval" value="90" placeholder="90">
             </div>
         </div>
         <div class="checkbox-row" style="margin-top: var(--space-4);">
@@ -194,7 +194,7 @@
             </div>
             <div class="form-field fixed">
                 <label class="form-label" for="fallbackTimeoutMs">Timeout</label>
-                <input|number id="fallbackTimeoutMs" placeholder="Ms">
+                <input|text filter="0~9" id="fallbackTimeoutMs" placeholder="Ms">
             </div>
         </div>
     </div>

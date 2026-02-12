@@ -61,7 +61,7 @@ document.on('click', '#save', (event) => {
         name: document.$('#name').value,
         type: document.$('#type').value,
         localIP: document.$('#localIP').value || '127.0.0.1',
-        localPort: parseInt(document.$('#localPort').value),
+        localPort: parseInt(document.$('#localPort').value) || undefined,
         remotePort: parseInt(document.$('#remotePort').value) || undefined,
         transport: {
             useEncryption: document.$('#useEncryption').checked,

@@ -60,7 +60,7 @@ document.on('click', '#save', (event) => {
         serverUser: document.$('#serverUser').value || undefined,
         secretKey: document.$('#secretKey').value || undefined,
         bindAddr: document.$('#bindAddr').value || undefined,
-        bindPort: parseInt(document.$('#bindPort').value),
+        bindPort: parseInt(document.$('#bindPort').value) || undefined,
         transport: {
             useEncryption: document.$('#useEncryption').checked,
             useCompression: document.$('#useCompression').checked
@@ -70,8 +70,8 @@ document.on('click', '#save', (event) => {
     if (visitorData.type === 'xtcp') {
         visitorData.protocol = document.$('#protocol').value;
         visitorData.keepTunnelOpen = document.$('#keepTunnelOpen').checked;
-        visitorData.maxRetriesAnHour = parseInt(document.$('#maxRetriesAnHour').value);
-        visitorData.minRetryInterval = parseInt(document.$('#minRetryInterval').value);
+        visitorData.maxRetriesAnHour = parseInt(document.$('#maxRetriesAnHour').value) || 8;
+        visitorData.minRetryInterval = parseInt(document.$('#minRetryInterval').value) || 90;
         visitorData.fallbackTo = document.$('#fallbackTo').value || undefined;
         visitorData.fallbackTimeoutMs = parseInt(document.$('#fallbackTimeoutMs').value) || undefined;
     }
