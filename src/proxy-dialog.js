@@ -8,6 +8,31 @@ export class ProxyDialog extends Element {
     this.saveCallback = props.saveCallback || null;
   }
 
+  // Called after component is mounted
+  componentDidMount() {
+    // Load data if editing
+    if (this.index >= 0 && this.data) {
+      this.$("#name").value = this.data.name || '';
+      this.$("#type").value = this.data.type || 'tcp';
+      this.$("#localIP").value = this.data.localIP || '127.0.0.1';
+      this.$("#localPort").value = this.data.localPort || '';
+      this.$("#remotePort").value = this.data.remotePort || '';
+      this.$("#customDomains").value = this.data.customDomains?.join(',') || '';
+      this.$("#secretKey").value = this.data.secretKey || '';
+      this.$("#useEncryption").checked = this.data.transport?.useEncryption || false;
+      this.$("#useCompression").checked = this.data.transport?.useCompression || false;
+      this.$("#bandwidthLimit").value = this.data.transport?.bandwidthLimit || '';
+      this.$("#bandwidthLimitMode").value = this.data.transport?.bandwidthLimitMode || 'client';
+    }
+
+    // Setup event handlers
+    this.updateVisibleFields();
+
+    this.on("change", "#type", () => this.updateVisibleFields());
+    this.on("click", "#cancel", () => this.closeDialog());
+    this.on("click", "#save", () => this.saveDialog());
+  }
+
   // Render the dialog UI
   render(props, kids) {
     const isEdit = this.index >= 0;
@@ -100,31 +125,6 @@ export class ProxyDialog extends Element {
         </div>
       </div>
     );
-  }
-
-  // Called after component is mounted
-  componentDidMount() {
-    // Load data if editing
-    if (this.index >= 0 && this.data) {
-      this.$("#name").value = this.data.name || '';
-      this.$("#type").value = this.data.type || 'tcp';
-      this.$("#localIP").value = this.data.localIP || '127.0.0.1';
-      this.$("#localPort").value = this.data.localPort || '';
-      this.$("#remotePort").value = this.data.remotePort || '';
-      this.$("#customDomains").value = this.data.customDomains?.join(',') || '';
-      this.$("#secretKey").value = this.data.secretKey || '';
-      this.$("#useEncryption").checked = this.data.transport?.useEncryption || false;
-      this.$("#useCompression").checked = this.data.transport?.useCompression || false;
-      this.$("#bandwidthLimit").value = this.data.transport?.bandwidthLimit || '';
-      this.$("#bandwidthLimitMode").value = this.data.transport?.bandwidthLimitMode || 'client';
-    }
-
-    // Setup event handlers
-    this.updateVisibleFields();
-
-    this.on("change", "#type", () => this.updateVisibleFields());
-    this.on("click", "#cancel", () => this.closeDialog());
-    this.on("click", "#save", () => this.saveDialog());
   }
 
   // Update field visibility based on type

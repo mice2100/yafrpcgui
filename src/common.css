@@ -364,7 +364,7 @@ toggle:checked {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    border: 1px solid transparent;
+    /*border: 1px solid transparent;*/
 }
 
 .status-badge.stopped {

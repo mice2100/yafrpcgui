@@ -87,7 +87,7 @@
             flow: horizontal;
             align-items: center;
             padding: 0 var(--space-2);
-            margin-bottom: var(--space-4);
+            margin-bottom: var(--space-2);
         }
 
         .section-title {
@@ -97,6 +97,7 @@
             letter-spacing: 0.12em;
             color: var(--color-teal);
             font-family: "SF Mono", "Consolas", "Monaco", monospace;
+            vertical-align: bottom;
         }
 
         .section-count {
@@ -117,6 +118,10 @@
             margin-left: *;
             flow: horizontal;
             border-spacing: var(--space-3);
+        }
+
+        .section-actions > * {
+            vertical-align: middle;
         }
 
         .section-body {
@@ -304,13 +309,13 @@
             <h1>YAFRPC</h1>
             <div class="header-subtitle">Control Deck v1.0</div>
         </div>
-        <div id="statusIndicator" class="status-badge stopped">○ Stopped</div>
     </header>
 
     <section class="section">
         <div class="section-header">
             <span class="section-title">Connection</span>
             <div class="section-actions">
+                <div id="statusIndicator" class="status-badge stopped">○ Stopped</div>
                 <button id="startStopButton" class="primary">Start</button>
                 <button id="applyButton">Apply</button>
             </div>
