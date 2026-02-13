@@ -175,7 +175,7 @@ input:focus, select:focus {
     box-shadow: 0 0 0 3px var(--color-teal-subtle);
 }
 
-input[placeholder] {
+input:empty {
     color: var(--color-text-faint);
 }
 
@@ -413,6 +413,60 @@ toggle:checked {
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     margin-top: var(--space-1);
+}
+
+/* ============================================================
+   DIALOG SYSTEM
+   ============================================================ */
+.dialog-content {
+    flow: vertical;
+    border-spacing: var(--space-6);
+    padding: var(--space-6);
+}
+
+.dialog-header h1 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.dialog-form-row {
+    flow: horizontal;
+    border-spacing: var(--space-4);
+}
+
+.dialog-form-section {
+    flow: vertical;
+    border-spacing: var(--space-4);
+}
+
+.section-title {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    font-family: "SF Mono", "Consolas", "Monaco", monospace;
+}
+
+.dialog-button-bar {
+    flow: horizontal;
+    border-spacing: var(--space-3);
+    height: 30px;
+    margin-top: var(--space-2);
+}
+
+.dialog-button-bar > div {
+    width: *;
+}
+
+/* Utility: margin-top */
+.mt-4 {
+    margin-top: var(--space-4);
+}
+
+.mt-5 {
+    margin-top: var(--space-5);
 }
 
 /* ============================================================

@@ -1,7 +1,9 @@
 import * as sys from '@sys';
 import * as env from '@env';
 import * as sciter from '@sciter';
-import {xt} from "./xterm";
+import { xt } from "./xterm";
+import { ProxyDialog } from "./proxy-dialog";
+import { VisitorDialog } from "./visitor-dialog";
 
 const EOL = "\n"
 const CONFIG_FILE = URL.toPath(env.home("frpc.json"))
@@ -26,9 +28,7 @@ export async function pipeReader(pipe, name, fnNewLine) {
             }
         }
     } catch (e) {
-        // if (e.message != "socket is not connected")
-            // if (fnNewLine) fnNewLine(e.message, "error")
-        // out.append(<text class="error">{e.message}</text>);
+        // Ignore errors during shutdown
     }
 }
 
@@ -61,7 +61,7 @@ function loadConfig() {
     }
     config.auth = config.auth || {}
     config.transport = config.transport || {}
-    
+
     updateUI();
 }
 
@@ -187,20 +187,6 @@ function updateProxyList() {
     });
 }
 
-function addProxy() {
-    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: { index: -1 }, alignment: 5 });
-    if (result) {
-        saveProxyData(-1, result.data);
-    }
-}
-
-function addVisitor() {
-    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: { index: -1 }, alignment: 5 });
-    if (result) {
-        saveVisitorData(-1, result.data);
-    }
-}
-
 function saveProxyData(index, proxyData) {
     if (index >= 0) {
         config.proxies[index] = proxyData;
@@ -221,50 +207,71 @@ function saveVisitorData(index, visitorData) {
     updateCounts();
 }
 
+// Dialog functions
+function addProxy() {
+  document.popup(<ProxyDialog index={-1} saveCallback={saveProxyData} />, {anchorAt: 5});
+}
+
+function addVisitor() {
+    document.popup(<VisitorDialog index={-1} saveCallback={saveVisitorData} />, {anchorAt: 5});
+}
+
+function editProxy(index) {
+    document.popup(<ProxyDialog index={index} data={config.proxies[index]} saveCallback={(i, data) => {
+        config.proxies[i] = data;
+        updateProxyList();
+        updateCounts();
+    }} />, {anchorAt: 5});
+}
+
+function editVisitor(index) {
+    document.body.popup(<VisitorDialog index={index} data={config.visitors[index]} saveCallback={(i, data) => {
+        config.visitors[i] = data;
+        updateVisitorList();
+        updateCounts();
+    }} />, {anchorAt: 5});
+}
+
 document.on('ready', loadConfig);
 document.on("click", "#addProxy", addProxy);
 document.on("click", "#addVisitor", addVisitor);
 
-// Use event delegation for dynamically created elements
+// Event delegation for dynamically created elements
 document.on("click", "#editProxy", function(evt, elt) {
-    const index = elt.getAttribute("data-index");
-    const params = { index: index, data: config.proxies[index] };
-    let result = Window.this.modal({ url: __DIR__ + "proxy-dialog.htm", parameters: params, alignment: 5 });
-    if (result) {
-        config.proxies[index] = result.data;
-        updateProxyList();
-    }
+    const index = parseInt(elt.getAttribute("data-index"));
+    editProxy(index);
 });
 
 document.on("click", "#deleteProxy", function(evt, elt) {
-    const index = elt.getAttribute("data-index");
-    let result = Window.this.modal(<question>{`Are you sure you want to delete the proxy "${config.proxies[index].name}"?`}</question>);
-    if (result=='yes') {
+    const index = parseInt(elt.getAttribute("data-index"));
+    let result = document.body.popup(
+        <question>{`Are you sure you want to delete the proxy "${config.proxies[index].name}"?`}</question>
+    );
+    if (result == 'yes') {
         config.proxies.splice(index, 1);
         updateProxyList();
+        updateCounts();
     }
 });
 
 document.on("click", "#editVisitor", function(evt, elt) {
-    const index = elt.getAttribute("data-index");
-    const params = { index: index, data: config.visitors[index] };
-    let result = Window.this.modal({ url: __DIR__ + "visitor-dialog.htm", parameters: params, alignment: 5 });
-    if (result) {
-        config.visitors[index] = result.data;
-        updateVisitorList();
-    }
+    const index = parseInt(elt.getAttribute("data-index"));
+    editVisitor(index);
 });
 
 document.on("click", "#deleteVisitor", function(evt, elt) {
-    const index = elt.getAttribute("data-index");
-    let result = Window.this.modal(<question>{`Are you sure you want to delete the visitor "${config.visitors[index].name}"?`}</question>);
-    if (result=='yes') {
+    const index = parseInt(elt.getAttribute("data-index"));
+    let result = document.body.popup(
+        <question>{`Are you sure you want to delete the visitor "${config.visitors[index].name}"?`}</question>
+    );
+    if (result == 'yes') {
         config.visitors.splice(index, 1);
         updateVisitorList();
+        updateCounts();
     }
 });
 
-// Add these event listeners
+// Toggle handlers
 document.on("change", "#toggleVisitor", function(evt, elt) {
     const index = parseInt(elt.getAttribute("data-index"));
     toggleVisitor(index);
@@ -279,10 +286,8 @@ function toggleVisitor(index) {
     const visitor = config.visitors[index];
     const startIndex = config.start.indexOf(visitor.name);
     if (startIndex === -1) {
-        // Visitor is not in start array, so enable it
         config.start.push(visitor.name);
     } else {
-        // Visitor is in start array, so disable it
         config.start.splice(startIndex, 1);
     }
     updateVisitorList();
@@ -292,10 +297,8 @@ function toggleProxy(index) {
     const proxy = config.proxies[index];
     const startIndex = config.start.indexOf(proxy.name);
     if (startIndex === -1) {
-        // Proxy is not in start array, so enable it
         config.start.push(proxy.name);
     } else {
-        // Proxy is in start array, so disable it
         config.start.splice(startIndex, 1);
     }
     updateProxyList();
