@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html window-width="960" window-height="800" window-min-width="840" window-min-height="640" window-resizable>
+<html window-width="960" window-height="800" window-min-width="840" window-min-height="640" window-resizable window-icon="frp.svg">
 <head>
-    <title>YAFRPC - Proxy Control Deck</title>
+    <title>YAFRPCGUI - Yet Another FRPC GUI</title>
     <link rel="stylesheet" href="common.css" />
     <style>
         body {
             min-width: 840px;
             min-height: 640px;
-            padding: var(--space-8);
+            padding: var(--space-4);
             background: var(--color-surface-warm);
             background-image:
                 radial-gradient(circle at 20% 30%, rgba(13, 148, 136, 0.03) 0%, transparent 50%),
@@ -174,6 +174,7 @@
 
         .card {
             width: 170px;
+            height: 110px;
             background: var(--color-surface-card);
             border-radius: var(--radius-md);
             padding: var(--space-4);
@@ -264,27 +265,31 @@
         }
 
         /* ============================================================
-           TERMINAL
+           PLAINTEXT LOG
            ============================================================ */
-        terminal {
-            background: #1a1d23;
+        plaintext {
             border-radius: var(--radius-md);
             padding: var(--space-4);
-            font-family: "SF Mono", "Consolas", "Monaco", monospace;
+            /* font-family: "SF Mono", "Consolas", "Monaco", monospace;
             font-size: var(--text-xs);
-            line-height: 1.6;
+            line-height: 1.6; */
             min-height: 120px;
             max-height: 200px;
-            color: #34d399;
+            /* color: #34d399;
             border: var(--border-card);
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3); */
         }
 
         /* ============================================================
            EMPTY STATE
            ============================================================ */
         .empty-state {
-            padding: var(--space-14) var(--space-8);
+            width: 170px;
+            height: 110px;
+            padding: var(--space-4);
+            flow: vertical;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             color: var(--color-text-muted);
             font-size: var(--text-sm);
@@ -306,8 +311,8 @@
 <body>
     <header class="header">
         <div class="header-brand">
-            <h1>YAFRPC</h1>
-            <div class="header-subtitle">Control Deck v1.0</div>
+            <h1>YAFRPCGUI</h1>
+            <div class="header-subtitle">Yet Another FRPC GUI v1.4</div>
         </div>
     </header>
 
@@ -380,13 +385,11 @@
         <div id="visitorList" class="card-grid"></div>
     </section>
 
-    <splitter />
-
     <section class="section">
         <div class="section-header">
             <span class="section-title">Console Output</span>
         </div>
-        <terminal #log rows="300"></terminal>
+        <plaintext #log readonly></plaintext>
     </section>
 
     <script type="module" src="main.js"></script>

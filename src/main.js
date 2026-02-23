@@ -1,16 +1,14 @@
 import * as sys from '@sys';
 import * as env from '@env';
 import * as sciter from '@sciter';
-import { xt } from "./xterm";
 import { ProxyDialog } from "./proxy-dialog";
 import { VisitorDialog } from "./visitor-dialog";
 
 const EOL = "\n"
-const CONFIG_FILE = URL.toPath(env.home("frpc.json"))
+const CONFIG_FILE = URL.toPath(env.path("documents", "yafrpcgui.json"))
 
 var processFrpc = null;
 let config = {};
-const terminal = document.$("#log").terminal;
 
 export async function pipeReader(pipe, name, fnNewLine) {
     try {
@@ -20,9 +18,12 @@ export async function pipeReader(pipe, name, fnNewLine) {
             text = sciter.decode(text);
             while (text) {
                 var eolpos = text.indexOf(EOL);
-                if (eolpos < 0) { cline += text; continue reading; }
-                cline += text.substr(0, eolpos);
-                text = text.substr(eolpos + EOL.length)
+                if (eolpos < 0) {
+                    cline += text.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, '');
+                    continue reading;
+                }
+                cline += text.substr(0, eolpos).replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, '');
+                text = text.substr(eolpos + EOL.length);
                 if (fnNewLine) fnNewLine(cline, "msg")
                 cline = "";
             }
@@ -33,19 +34,12 @@ export async function pipeReader(pipe, name, fnNewLine) {
 }
 
 function fnNewLine(cline, cls){
-    let txt=""
-    switch(cls) {
-        case 'msg':
-            txt = xt.white(cline)
-            break;
-        case 'info':
-            txt = xt.yellow(cline)
-            break;
-        case 'error':
-            txt = xt.red(cline)
-            break;
-    }
-    terminal.write(txt+"\r\n");
+    const elt = document.$("#log");
+    const logger = elt?.plaintext;
+    if (!logger) return;
+    if (!logger.content) {logger.content = cline;}
+    else {logger.appendLine(cline);}
+    elt.execCommand("navigate:end");
 }
 
 function loadConfig() {
@@ -72,9 +66,9 @@ function saveConfig() {
     config.webServer.port = parseInt(document.$('#webServerPort').value);
     config.auth.token = document.$('#token').value||undefined;
     config.transport.protocol = document.$('#transProtocol').value||undefined;
-    let file = sys.fs.sync.open(CONFIG_FILE, 'w');
-    file.write(sciter.encode(JSON.stringify(config, null, 2)));
-    file.close();
+    let file = sys.fs.openSync(CONFIG_FILE, 'w');
+    file.writeSync(sciter.encode(JSON.stringify(config, null, 2)));
+    file.closeSync();
 }
 
 function updateUI() {
@@ -244,7 +238,7 @@ document.on("click", "#editProxy", function(evt, elt) {
 
 document.on("click", "#deleteProxy", function(evt, elt) {
     const index = parseInt(elt.getAttribute("data-index"));
-    let result = document.body.popup(
+    let result = Window.this.modal(
         <question>{`Are you sure you want to delete the proxy "${config.proxies[index].name}"?`}</question>
     );
     if (result == 'yes') {
@@ -261,7 +255,7 @@ document.on("click", "#editVisitor", function(evt, elt) {
 
 document.on("click", "#deleteVisitor", function(evt, elt) {
     const index = parseInt(elt.getAttribute("data-index"));
-    let result = document.body.popup(
+    let result = Window.this.modal(
         <question>{`Are you sure you want to delete the visitor "${config.visitors[index].name}"?`}</question>
     );
     if (result == 'yes') {
@@ -326,23 +320,46 @@ function updateStatusIndicator(isRunning) {
     }
 }
 
+function getFrpcPath() {
+    const exe = env.PLATFORM === "Windows" ? "frpc.exe" : "frpc";
+    
+    const path1 = URL.toPath(env.home(exe));
+    try {
+        if (sys.fs.sync.stat(path1)) return path1;
+    } catch(e) {}
+    
+    const path2 = URL.toPath(__DIR__ + "../" + exe);
+    try {
+        if (sys.fs.sync.stat(path2)) return path2;
+    } catch(e) {}
+    
+    return null;
+}
+
 document.on("click", "#startStopButton", async(event) => {
     if (processFrpc) {
         processFrpc.kill();
         document.$("#startStopButton").textContent = "Start";
         document.$('#webServerPort').state.disabled = false;
         processFrpc = null;
-        fnNewLine("FRPC Stopped", "info");
+        fnNewLine("FRPC Stopped");
         updateStatusIndicator(false);
     } else {
         document.$("#startStopButton").textContent = "Stop";
         document.$('#webServerPort').state.disabled = true;
         saveConfig();
-        let path = URL.toPath(env.home("wfrpc.exe"));
+        let path = getFrpcPath();
+        if (!path) {
+            fnNewLine("Error: frpc executable not found.");
+            document.$("#startStopButton").textContent = "Start";
+            document.$('#webServerPort').state.disabled = false;
+            return;
+        }
         const args = [path, "-c", CONFIG_FILE];
         processFrpc = sys.spawn(args, { stdout: "pipe", stderr: "pipe" });
         let pout = pipeReader(processFrpc.stdout, "stdout", fnNewLine);
         let perr = pipeReader(processFrpc.stderr, "stderr", fnNewLine);
+        updateStatusIndicator(true);
 
         var r = await processFrpc.wait()
         processFrpc.stderr.close()
@@ -350,7 +367,7 @@ document.on("click", "#startStopButton", async(event) => {
         await pout
         await perr
         document.$("#startStopButton").textContent = "Start";
-        fnNewLine("FRPC Stopped", "info");
+        fnNewLine("FRPC Stopped");
         updateStatusIndicator(false);
         processFrpc = null;
     }
@@ -359,7 +376,8 @@ document.on("click", "#startStopButton", async(event) => {
 document.on("click", "#applyButton", async (event) => {
     saveConfig();
     if (processFrpc) {
-        let path = URL.toPath(env.home("wfrpc.exe"));
+        let path = getFrpcPath();
+        if (!path) return;
         const args = [path, "reload", "-c", CONFIG_FILE];
         sys.spawn(args);
     }

@@ -1,0 +1,28 @@
+{
+  "window": {
+    "left": 880,
+    "top": 379,
+    "width": 800,
+    "height": 628
+  },
+  "projects": [
+    {
+      "id": "13QWOJ1L2QPTC1OUDP5P1QWU1N6",
+      "name": "yafrpcgui",
+      "exe": "yafrpcgui",
+      "logo": "/Users/taoliu/Documents/codes/yafrpcgui/src/frp.svg",
+      "resources": "/Users/taoliu/Documents/codes/yafrpcgui/src",
+      "productName": "yafrpcgui",
+      "productVersion": "1.4",
+      "productDescription": "Yet Another FRPC GUI",
+      "productCopyright": "",
+      "productCompany": "",
+      "out": "/Users/taoliu/Documents/codes/yafrpcgui/bin",
+      "entry": "main.htm found",
+      "entryFileExists": true,
+      "targets": [
+        "mac"
+      ]
+    }
+  ]
+}

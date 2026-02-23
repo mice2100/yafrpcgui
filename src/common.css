@@ -103,9 +103,7 @@
    GLOBAL RESET
    ============================================================ */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 }
 
 html {
@@ -318,39 +316,6 @@ input[type="checkbox"]:checked {
 
 input[type="checkbox"]:checked:hover {
     background: var(--color-teal-hover);
-}
-
-/* ============================================================
-   TOGGLE SWITCH
-   ============================================================ */
-toggle {
-    font-family: "SF Mono", "Consolas", "Monaco", monospace;
-    font-size: var(--text-xs);
-    font-weight: 700;
-    padding: var(--space-2) var(--space-3);
-    border: var(--border-subtle);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-card);
-    color: var(--color-text-muted);
-    cursor: pointer;
-    text-align: center;
-    /*width: 42px;*/
-    transition: all var(--transition-normal);
-    letter-spacing: 0.05em;
-    height: auto;
-    box-shadow: var(--shadow-sm);
-}
-
-toggle:hover {
-    background: var(--color-surface-elevated);
-    color: var(--color-text-tertiary);
-}
-
-toggle:checked {
-    background: var(--color-status-active);
-    border-color: var(--color-status-active);
-    color: #ffffff;
-    box-shadow: 0 0 0 2px var(--color-status-active-subtle);
 }
 
 /* ============================================================
